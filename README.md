@@ -1,5 +1,8 @@
 # croс-spring-java-school-2024-homework
 
+## Обо мне
+Соловьева Кристина, telegram: @kristinanotdead
+
 ## Контакты
 
 Эксперты:
