@@ -10,18 +10,65 @@ import java.util.regex.Pattern;
 import java.io.*;
 public class Task4 {
     public static void main(String[] args) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
-            String input = reader.readLine();
-            String result = removeJavaComments(input);
-            System.out.println(result);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+        Scanner sc = new Scanner(System.in);
+        StringBuilder builder = new StringBuilder();
 
+        while (sc.hasNext()) {
+            String input = sc.nextLine();
+
+            if(input.equals("exit")){
+                break;
+            }
+
+            builder.append(input).append('\n');
+        }
+
+        String result = removeJavaComments(builder.toString());
+        System.out.println(result);
+    }
     public static String removeJavaComments(String input) {
-        Pattern pattern = Pattern.compile("(//.*?$|/\\*.*?\\*/)", Pattern.MULTILINE | Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(input);
-        return matcher.replaceAll("");
+        StringBuilder builder = new StringBuilder();
+        boolean inBlockComment = false;
+        boolean inString = false;
+
+        for (int i = 0; i < input.length(); i++) {
+            if (inBlockComment) {
+                if (i < input.length() - 1 && input.charAt(i) == '*' && input.charAt(i + 1) == '/') {
+                    inBlockComment = false;
+                    i++;
+                }
+            } else if (inString){
+                if (input.charAt(i) == '"') {
+                    inString = false;
+                }
+
+                builder.append(input.charAt(i));
+            } else {
+                if (input.charAt(i) == '"'){
+                    inString = true;
+                    builder.append(input.charAt(i));
+                    continue;
+                }
+
+                if (i < input.length() - 1 && input.charAt(i) == '/' && input.charAt(i + 1) == '*') {
+                    inBlockComment = true;
+                    i++;
+                    continue;
+                }
+
+                if (i < input.length() - 1 && input.charAt(i) == '/' && input.charAt(i + 1) == '/') {
+                    while(i < input.length() - 1 && input.charAt(i) != '\n'){
+                        i++;
+                    }
+
+                    builder.append('\n');
+                    continue;
+                }
+
+                builder.append(input.charAt(i));
+            }
+        }
+
+        return builder.toString();
     }
 }
