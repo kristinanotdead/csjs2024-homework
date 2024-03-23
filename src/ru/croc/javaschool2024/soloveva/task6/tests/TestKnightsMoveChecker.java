@@ -11,7 +11,6 @@ import ru.croc.javaschool2024.soloveva.task6.KnightsMoveCheckerFactory;
  * @author Dmitry Malenok
  */
 public class TestKnightsMoveChecker implements TestExceptionThrown{
-
     /**
      * Тестируемый обработчик.
      */

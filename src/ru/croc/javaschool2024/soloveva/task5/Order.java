@@ -3,30 +3,71 @@ package ru.croc.javaschool2024.soloveva.task5;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 
-public class Order {
+public class Order implements OrderStatusChanger{
     private final String orderNumber;
     private final LocalDateTime timeOfCreating;
     private LocalDateTime timeOfCollecting;
-    private LocalDateTime timeOfGetting;
-    public final ArrayList<Product> orderList;
+    private LocalDateTime timeOfClosing;
+    private ArrayList<Product> orderList;
     private final String clientNameSurnPatr;
     private final String clientPhoneNumber;
     private OrderStatus status;
     private double totalSum;
 
-    public void collectOrder() {
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public ArrayList<Product> getOrderList() {
+        return orderList;
+    }
+
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    public LocalDateTime getTimeOfCreating() {
+        return timeOfCreating;
+    }
+
+    public LocalDateTime getTimeOfCollecting() {
+        return timeOfCollecting;
+    }
+
+    public LocalDateTime getTimeOfClosing() {
+        return timeOfClosing;
+    }
+
+    public String getClientNameSurnPatr() {
+        return clientNameSurnPatr;
+    }
+
+    public String getClientPhoneNumber() {
+        return clientPhoneNumber;
+    }
+
+    public double getTotalSum() {
+        return totalSum;
+    }
+
+    public void collectOrder() throws IllegalOrderStatusException {
+        if (status != OrderStatus.CREATED){
+            throw new IllegalOrderStatusException();
+        }
+
         timeOfCollecting = LocalDateTime.now();
         status = OrderStatus.COLLECTED;
     }
 
-    public void giveOrder() {
-        timeOfGetting = LocalDateTime.now();
+    public void closeOrder() throws IllegalOrderStatusException {
+        if (status != OrderStatus.COLLECTED){
+            throw new IllegalOrderStatusException();
+        }
+
+        timeOfClosing = LocalDateTime.now();
         status = OrderStatus.CLOSED;
-        System.out.println(generateOrderConfirmationMessage());
     }
     private double calculateTheTotalSum(ArrayList<Product> orderList) {
         totalSum = 0.0;
@@ -36,19 +77,15 @@ public class Order {
         return totalSum;
     }
 
-    public static Order createOrder(ArrayList<Product> orderList, String clientNameSurnPatr, String clientPhoneNumber) {
+    public Order(ArrayList<Product> orderList, String clientNameSurnPatr,
+                 String clientPhoneNumber) throws IllegalOrderListException {
         if (!checkSizeOfOrder(orderList)) {
-            System.out.println("Вы не можете добавить более 10 товаров в заказ!");
-            return null;
+            throw new IllegalOrderListException();
         }
-        LocalDateTime timeOfCreating = LocalDateTime.now();
-        return new Order(generateOrderNumber(timeOfCreating, clientPhoneNumber), timeOfCreating, orderList, clientNameSurnPatr, clientPhoneNumber);
-    }
 
-    private Order(String orderNumber, LocalDateTime timeOfCreating, ArrayList<Product> orderList, String clientNameSurnPatr, String clientPhoneNumber) {
         this.orderList = orderList;
-        this.timeOfCreating = timeOfCreating;
-        this.orderNumber = orderNumber;
+        this.timeOfCreating = LocalDateTime.now();
+        this.orderNumber = generateOrderNumber(timeOfCreating, clientPhoneNumber);
         this.clientNameSurnPatr = clientNameSurnPatr;
         this.clientPhoneNumber = clientPhoneNumber;
         this.totalSum = calculateTheTotalSum(orderList);
@@ -67,7 +104,11 @@ public class Order {
         return orderList.size() <= 10;
     }
 
-    public String generateOrderConfirmationMessage() {
+    public String generateOrderConfirmationMessage() throws IllegalOrderStatusException{
+        if (status != OrderStatus.CLOSED){
+            throw new IllegalOrderStatusException();
+        }
+
         StringBuilder document = new StringBuilder();
 
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
@@ -84,7 +125,7 @@ public class Order {
         document.append("\n");
         document.append("Сумма к оплате: ").append(decimalFormat.format(totalSum)).append("₽\n\n");
         document.append("С наилучшими пожеланиями, магазин “Кошки и картошки”,\n");
-        document.append(dateFormat.format(timeOfGetting));
+        document.append(dateFormat.format(timeOfClosing));
         return document.toString();
     }
 }
