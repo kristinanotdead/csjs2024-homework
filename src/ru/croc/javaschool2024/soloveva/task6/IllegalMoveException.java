@@ -11,13 +11,17 @@ public class IllegalMoveException extends Exception {
     private ChessPosition to;
 
     public IllegalMoveException(ChessPosition from, ChessPosition to) {
+        super(String.format("%s -> %s", from, to));
         this.from = from;
         this.to = to;
     }
 
-    @Override
-    public String getMessage(){
-        return String.format("%s -> %s", from, to);
+    public ChessPosition getFrom() {
+        return from;
+    }
+
+    public ChessPosition getTo() {
+        return to;
     }
 }
 

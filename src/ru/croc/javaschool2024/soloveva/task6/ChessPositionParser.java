@@ -19,17 +19,19 @@ public final class ChessPositionParser {
      * @return объект расположения фигуры на шахматной доске, соответствующий переданному наименованию клетки
      */
     public static ChessPosition parse(final String position) {
-        if (position.length() != 2 ||
-                !Character.isLetter(position.charAt(0)) ||
-                !Character.isDigit(position.charAt(1))) {
+        if (position.length() != 2) {
             throw new IllegalPositionException(position);
         }
 
         char columnChar = position.charAt(0);
         char rowChar = position.charAt(1);
         int x = columnChar - 'a';
-        int y = Character.getNumericValue(rowChar) - 1;
+        int y = rowChar - '1';
 
-        return new ChessPosition(x, y);
+        if (x < 0 || x > 7 || y < 0 || y > 7) {
+            throw new IllegalPositionException(position, x, y);
+        }
+
+        return new ChessPositionImpl(x, y);
     }
 }
