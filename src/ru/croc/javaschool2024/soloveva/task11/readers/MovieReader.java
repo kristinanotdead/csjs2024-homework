@@ -1,16 +1,17 @@
-package ru.croc.javaschool2024.soloveva.task11;
+package ru.croc.javaschool2024.soloveva.task11.readers;
+
+import ru.croc.javaschool2024.soloveva.task11.errors.IncorrectMovieException;
+import ru.croc.javaschool2024.soloveva.task11.models.Movie;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MovieReader {
-    public static Map<Integer, Movie> readMoviesFromFile(String fileName) throws IOException, IncorrectMovieException {
-        Map<Integer, Movie> movies = new HashMap<>();
+    public static List<Movie> readMoviesFromFile(String fileName) throws IOException, IncorrectMovieException {
+        List<Movie> movies = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
@@ -20,8 +21,8 @@ public class MovieReader {
                     try {
                         int id = Integer.parseInt(parts[0].trim());
                         String title = parts[1].trim();
-                        movies.put(id, new Movie(id, title));
-                    } catch (NumberFormatException e){
+                        movies.add(new Movie(id, title));
+                    } catch (NumberFormatException e) {
                         throw new IncorrectMovieException(line);
                     }
                 } else {

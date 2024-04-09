@@ -9,6 +9,7 @@ public class Task8 {
     private static final int PASSWORD_LENGTH = 7;
     private static final char MIN_CHAR = 'a';
     private static final char MAX_CHAR = 'z';
+    private static final int TASKS_COUNT = MAX_CHAR - MIN_CHAR + 1;
 
     public static void main(String[] args) {
         try {
@@ -27,67 +28,66 @@ public class Task8 {
     }
 
     public static String decodePassword(Integer threadNums, String hash) {
-        ExecutorService pool = Executors.newFixedThreadPool(threadNums);
-        CompletionService<String> completionService = new ExecutorCompletionService<>(pool);
-        ArrayList<Callable<String>> tasks = new ArrayList<>();
+        String result = null;
 
-        StringBuilder startPassword = new StringBuilder();
+        try(ExecutorService pool = Executors.newFixedThreadPool(threadNums)) {
+            CompletionService<String> completionService = new ExecutorCompletionService<>(pool);
+            ArrayList<Callable<String>> tasks = new ArrayList<>();
+            StringBuilder startPassword = new StringBuilder();
 
-        for (int j = 0; j < PASSWORD_LENGTH; j++) {
-            startPassword.append(MIN_CHAR);
-        }
+            for (int j = 0; j < PASSWORD_LENGTH; j++) {
+                startPassword.append(MIN_CHAR);
+            }
 
-        for (int i = 0; i < 26; i++) {
-            startPassword.setCharAt(0, (char) ('a' + i));
-            StringBuilder passwordForThread = new StringBuilder(startPassword);
+            for (int i = 0; i < TASKS_COUNT; i++) {
+                startPassword.setCharAt(0, (char) ('a' + i));
+                StringBuilder passwordForThread = new StringBuilder(startPassword);
 
-            tasks.add(() -> {
-                while (true) {
-                    if (hashPassword(passwordForThread.toString()).equals(hash)) {
-                        return passwordForThread.toString();
+                tasks.add(() -> {
+                    while (true) {
+                        if (hashPassword(passwordForThread.toString()).equals(hash)) {
+                            return passwordForThread.toString();
+                        }
+                        int pos = PASSWORD_LENGTH - 1;
+                        while (pos > 0 && passwordForThread.charAt(pos) == MAX_CHAR) {
+                            pos--;
+                        }
+
+                        if (pos == 0) {
+                            return null;
+                        }
+                        passwordForThread.setCharAt(pos, (char) (passwordForThread.charAt(pos) + 1));
+
+                        for (int j = pos + 1; pos < PASSWORD_LENGTH - 1; pos++) {
+                            passwordForThread.setCharAt(j, MIN_CHAR);
+                        }
                     }
+                });
+            }
 
-                    int pos = PASSWORD_LENGTH - 1;
-                    while (pos > 0 && passwordForThread.charAt(pos) == MAX_CHAR) {
-                        pos--;
+            for (Callable<String> task : tasks) {
+                completionService.submit(task);
+            }
+
+            int received = 0;
+            boolean hasErrors = false;
+
+            while (received < TASKS_COUNT && !hasErrors) {
+                try {
+                    Future<String> resultFuture = completionService.take();
+                    result = resultFuture.get();
+                    received++;
+
+                    if (result != null) {
+                        pool.shutdownNow();
+                        break;
                     }
-
-                    if (pos == 0) {
-                        return null;
-                    }
-
-                    passwordForThread.setCharAt(pos, (char) (passwordForThread.charAt(pos) + 1));
-
-                    for (int j = pos + 1; pos < PASSWORD_LENGTH - 1; pos++) {
-                        passwordForThread.setCharAt(j, MIN_CHAR);
-                    }
+                } catch (Exception e) {
+                    hasErrors = true;
                 }
-            });
-        }
-
-        for (Callable<String> task : tasks) {
-            completionService.submit(task);
-        }
-
-        int received = 0;
-        boolean hasErrors = false;
-
-        while (received < 26 && !hasErrors) {
-            try {
-                Future<String> resultFuture = completionService.take();
-                String result = resultFuture.get();
-                received++;
-
-                if (result != null) {
-                    pool.shutdownNow();
-                    return result;
-                }
-            } catch (Exception e) {
-                hasErrors = true;
-                System.out.println(e);
             }
         }
 
-        return null;
+        return result;
     }
 }

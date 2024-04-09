@@ -1,6 +1,5 @@
-package ru.croc.javaschool2024.soloveva.task11;
+package ru.croc.javaschool2024.soloveva.task11.models;
 
-// User.java
 import java.util.HashMap;
 
 public class User {

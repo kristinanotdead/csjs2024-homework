@@ -4,7 +4,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class MD5Hashing {
-
     private static final char[] HEX_DIGITS = "0123456789ABCDEF".toCharArray();
 
     public static String hashPassword(String password) {
@@ -18,7 +17,6 @@ public class MD5Hashing {
         byte[] bytes = digest.digest();
         return toHexString(bytes);
     }
-
     private static String toHexString(byte[] bytes) {
         StringBuilder hex = new StringBuilder(bytes.length * 2);
         for (byte b : bytes) {

@@ -1,12 +1,13 @@
-package ru.croc.javaschool2024.soloveva.task11;
+package ru.croc.javaschool2024.soloveva.task11.readers;
 
 // UserHistoryReader.java
+import ru.croc.javaschool2024.soloveva.task11.errors.IncorrectHistoryException;
+import ru.croc.javaschool2024.soloveva.task11.models.User;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class UserHistoryReader {

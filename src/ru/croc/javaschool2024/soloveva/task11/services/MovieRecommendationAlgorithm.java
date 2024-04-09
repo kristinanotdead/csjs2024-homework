@@ -1,11 +1,18 @@
-package ru.croc.javaschool2024.soloveva.task11;
+package ru.croc.javaschool2024.soloveva.task11.services;
+
+import ru.croc.javaschool2024.soloveva.task11.errors.IncorrectHistoryException;
+import ru.croc.javaschool2024.soloveva.task11.errors.IncorrectMovieException;
+import ru.croc.javaschool2024.soloveva.task11.models.Movie;
+import ru.croc.javaschool2024.soloveva.task11.models.User;
+import ru.croc.javaschool2024.soloveva.task11.readers.MovieReader;
+import ru.croc.javaschool2024.soloveva.task11.readers.UserHistoryReader;
 
 import java.io.IOException;
 import java.util.*;
 
 public class MovieRecommendationAlgorithm {
-    private Map<Integer, Movie> movies;
-    private Map<Integer, User> users;
+    private  List<Movie> movies;
+    private  Map<Integer, User> users;
 
     public MovieRecommendationAlgorithm(String moviesFileName, String historyFileName)
             throws IOException, IncorrectMovieException, IncorrectHistoryException {
@@ -61,7 +68,7 @@ public class MovieRecommendationAlgorithm {
     }
 
     private String getRecommendedMovie(Map<Integer, Integer> moviesAllViews) {
-        if(moviesAllViews.keySet().size() == 0){
+        if(moviesAllViews.keySet().isEmpty()){
             return "-";
         }
 
@@ -75,7 +82,13 @@ public class MovieRecommendationAlgorithm {
             }
         }
 
-        return movies.get(movieId).getTitle();
+        for(Movie movie : movies){
+            if(movie.getId() == movieId){
+                return movie.getTitle();
+            }
+        }
+
+        return "-";
     }
 
 }

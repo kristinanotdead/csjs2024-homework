@@ -14,9 +14,8 @@ public class BlackListFilterImpl implements BlackListFilter {
             }
         }
     }
-
     private boolean containsBlacklistedWords(String comment, Set<String> blackList) {
-        String[] commentWords = comment.replaceAll("\\p{Punct}", "").split("\\s+");
+        Set<String> commentWords = Set.of(comment.replaceAll("\\p{Punct}", "").split("\\s+"));
 
         for(String word : commentWords) {
             for(String blackword : blackList){

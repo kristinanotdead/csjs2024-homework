@@ -1,4 +1,4 @@
-package ru.croc.javaschool2024.soloveva.task11;
+package ru.croc.javaschool2024.soloveva.task11.errors;
 
 public class IncorrectHistoryException extends Exception {
     private String line;
