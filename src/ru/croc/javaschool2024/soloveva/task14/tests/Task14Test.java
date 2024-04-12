@@ -1,4 +1,4 @@
-package ru.croc.javaschool2024.surname.task14.tests;
+package ru.croc.javaschool2024.soloveva.task14.tests;
 
 import static org.testng.AssertJUnit.assertEquals;
 
