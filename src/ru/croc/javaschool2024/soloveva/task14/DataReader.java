@@ -1,25 +1,20 @@
 package ru.croc.javaschool2024.soloveva.task14;
-import java.io.BufferedReader;
-import java.io.FileReader;
+
 import java.io.IOException;
-import java.util.HashMap;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DataReader {
     public static Map<String, Long> readFromFile(String filename) throws IOException {
-        Map<String, Long> dataMap = new HashMap<>();
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                String item = parts[0].trim();
-                long value = Long.parseLong(parts[1].trim());
-                dataMap.put(item, value);
-            }
+        try (Stream<String> lines = Files.lines(Paths.get(filename))) {
+            return lines.map(line -> line.split(","))
+                    .collect(Collectors.toMap(
+                            parts -> parts[0].trim(),
+                            parts -> Long.parseLong(parts[1].trim())
+                    ));
         }
-
-        return dataMap;
     }
 }

@@ -5,7 +5,6 @@ import ru.croc.javaschool2024.soloveva.task13.kitchener.Kitchener;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class Kitchen {
     private final Map<Kitchener, Set<Dish>> kitchenerDishesMap;
@@ -21,10 +20,8 @@ public class Kitchen {
         return kitchenerDishesMap
                 .entrySet().stream()
                 .filter(entry -> workingKitcheners.contains(entry.getKey()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
-                .values().stream()
-                .flatMap(Collection::stream)
-                .collect(Collectors.toSet()).stream()
+                .map(Map.Entry::getValue)
+                .flatMap(Collection::stream).distinct()
                 .filter(dish -> dish.getIngredients().stream().noneMatch(unavailableIngredients::contains))
                 .sorted(Comparator.comparingInt(Dish::getKingAssessment)
                         .thenComparing(Dish::getCourtiersAssessment).reversed())

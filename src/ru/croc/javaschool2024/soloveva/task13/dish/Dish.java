@@ -58,17 +58,11 @@ public class Dish {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Dish dish = (Dish) o;
-        return getKingAssessment() == dish.getKingAssessment()
-                && getCourtiersAssessment() == dish.getCourtiersAssessment()
-                && Objects.equals(getName(), dish.getName())
-                && Objects.equals(recipe, dish.recipe)
-                && Objects.equals(getIngredients(), dish.getIngredients())
-                && getCategory() == dish.getCategory();
+        return Objects.equals(getName(), dish.getName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), recipe, getIngredients(), getCategory(),
-                getKingAssessment(), getCourtiersAssessment());
+        return Objects.hash(getName());
     }
 }
