@@ -36,7 +36,6 @@ _____________
 Pet createPet(String name, Integer age, List<Client> clients);
 ```
 
-
 _____________
 Поиск питомца по номеру мед карты.
 ```
@@ -60,7 +59,6 @@ _____________
 ```
 List<String> findClientPhoneNumbersBy(Pet pet);
 ```
-
 _____________
 Получение всех питомцев клиента.
 ```
